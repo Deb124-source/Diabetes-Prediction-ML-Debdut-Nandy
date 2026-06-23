@@ -110,9 +110,9 @@ if st.button(
     "Predict"
 ):
     if hypertension == "Yes":
-    hypertension = 1
-else:
-    hypertension = 0
+        hypertension = 1
+    else:
+        hypertension = 0
 
 
 if heart == "Yes":
