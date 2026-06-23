@@ -109,7 +109,17 @@ glucose = st.number_input(
 if st.button(
     "Predict"
 ):
+    if hypertension == "Yes":
+    hypertension = 1
+else:
+    hypertension = 0
 
+
+if heart == "Yes":
+    heart = 1
+else:
+    heart = 0
+    
     input_data = pd.DataFrame(
         {
         "gender":[gender],
@@ -130,10 +140,14 @@ if st.button(
     ]
 
 
-    for col in categorical:
-        input_data[col]=encoder.transform(
-            input_data[col]
-        )
+   input_data["gender"] = gender_encoder.transform(
+    input_data["gender"]
+)
+
+
+input_data["smoking_history"] = smoking_encoder.transform(
+    input_data["smoking_history"]
+)
 
 
 
