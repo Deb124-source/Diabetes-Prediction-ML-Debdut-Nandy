@@ -140,7 +140,7 @@ else:
     ]
 
 
-   input_data["gender"] = gender_encoder.transform(
+input_data["gender"] = gender_encoder.transform(
     input_data["gender"]
 )
 
