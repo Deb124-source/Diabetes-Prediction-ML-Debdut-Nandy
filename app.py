@@ -23,7 +23,14 @@ scaler = pickle.load(
 
 encoder = pickle.load(
     open(
-        "models/encoder.pkl",
+       "models/gender_encoder.pkl",
+        "rb"
+    )
+)
+
+encoder = pickle.load(
+    open(
+       "models/smoking_encoder.pkl",
         "rb"
     )
 )
