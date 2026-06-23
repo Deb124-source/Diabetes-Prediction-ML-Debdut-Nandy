@@ -21,16 +21,17 @@ scaler = pickle.load(
 )
 
 
-encoder = pickle.load(
+gender_encoder = pickle.load(
     open(
-       "models/gender_encoder.pkl",
+        "models/gender_encoder.pkl",
         "rb"
     )
 )
 
-encoder = pickle.load(
+
+smoking_encoder = pickle.load(
     open(
-       "models/smoking_encoder.pkl",
+        "models/smoking_encoder.pkl",
         "rb"
     )
 )
@@ -50,7 +51,11 @@ st.write(
 
 gender = st.selectbox(
     "Gender",
-    ["Male","Female","Other"]
+    [
+        "Male",
+        "Female",
+        "Other"
+    ]
 )
 
 
@@ -61,16 +66,25 @@ age = st.number_input(
 )
 
 
+
 hypertension = st.selectbox(
     "Hypertension",
-    [0,1]
+    [
+        "No",
+        "Yes"
+    ]
 )
+
 
 
 heart = st.selectbox(
     "Heart Disease",
-    [0,1]
+    [
+        "No",
+        "Yes"
+    ]
 )
+
 
 
 smoking = st.selectbox(
@@ -79,9 +93,11 @@ smoking = st.selectbox(
         "never",
         "former",
         "current",
-        "No Info"
+        "No Info",
+        "ever"
     ]
 )
+
 
 
 bmi = st.number_input(
@@ -91,11 +107,13 @@ bmi = st.number_input(
 )
 
 
+
 hba1c = st.number_input(
     "HbA1c Level",
     3.0,
     15.0
 )
+
 
 
 glucose = st.number_input(
@@ -109,73 +127,85 @@ glucose = st.number_input(
 if st.button(
     "Predict"
 ):
+
+
+    # Convert Yes/No to 0/1
+
     if hypertension == "Yes":
         hypertension = 1
     else:
         hypertension = 0
 
 
-if heart == "Yes":
-    heart = 1
-else:
-    heart = 0
-    
+
+    if heart == "Yes":
+        heart = 1
+    else:
+        heart = 0
+
+
+
+    # Create dataframe
+
     input_data = pd.DataFrame(
         {
-        "gender":[gender],
-        "age":[age],
-        "hypertension":[hypertension],
-        "heart_disease":[heart],
-        "smoking_history":[smoking],
-        "bmi":[bmi],
-        "HbA1c_level":[hba1c],
-        "blood_glucose_level":[glucose]
+            "gender":[gender],
+            "age":[age],
+            "hypertension":[hypertension],
+            "heart_disease":[heart],
+            "smoking_history":[smoking],
+            "bmi":[bmi],
+            "HbA1c_level":[hba1c],
+            "blood_glucose_level":[glucose]
         }
     )
 
 
-    categorical=[
-        "gender",
-        "smoking_history"
-    ]
 
+    # Encode categorical features
 
-input_data["gender"] = gender_encoder.transform(
-    input_data["gender"]
-)
-
-
-input_data["smoking_history"] = smoking_encoder.transform(
-    input_data["smoking_history"]
-)
+    input_data["gender"] = gender_encoder.transform(
+        input_data["gender"]
+    )
 
 
 
-    scaled=scaler.transform(
+    input_data["smoking_history"] = smoking_encoder.transform(
+        input_data["smoking_history"]
+    )
+
+
+
+    # Scale input
+
+    scaled = scaler.transform(
         input_data
     )
 
 
-    result=model.predict(
+
+    # Prediction
+
+    result = model.predict(
         scaled
     )[0]
 
 
 
-    probability=model.predict_proba(
+    probability = model.predict_proba(
         scaled
     )[0][1]
 
 
 
-    if result==1:
+    if result == 1:
 
         st.error(
-            f"Diabetes Risk Detected ({probability*100:.2f}%)"
+            f"⚠️ Diabetes Risk Detected ({probability*100:.2f}%)"
         )
 
     else:
 
         st.success(
-            f"No Diabetes Risk ({probability*100:.2f}%)"
+            f"✅ No Diabetes Risk ({probability*100:.2f}%)"
         )
